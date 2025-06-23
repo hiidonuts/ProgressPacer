@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProgressPacer - Calendar</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="icon" type="image/x-icon" href="img/icons/favicon.svg">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Add immediate login check -->
+    <script>
+        // Check login status immediately before page loads
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <button class="nav-toggle" id="navToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-logo">
+            <h1>ProgressPacer</h1>
+        </div>
+        <div class="nav-actions">
+            <div class="notification-container">
+                <button class="notification-btn" id="notificationBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge">0</span>
+                </button>
+                <div class="notification-dropdown" id="notificationDropdown">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button class="btn-link" id="markAllRead">Mark all as read</button>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <div class="no-notifications">
+                            <i class="fas fa-bell-slash"></i>
+                            <p>No notifications yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Side Navigation -->
+    <div class="sidenav" id="sideNav">
+        <div class="sidenav-header">
+            <h2>Navigation</h2>
+            <button class="close-btn" id="closeSideNav">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidenav-content">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="calendar.html" class="nav-item active">
+                <i class="fas fa-calendar"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="gpa.html" class="nav-item">
+                <i class="fas fa-graduation-cap"></i>
+                <span>My GPAs</span>
+            </a>
+            <a href="folder.html" class="nav-item">
+                <i class="fas fa-folder"></i>
+                <span>My Folder</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+        <div class="sidenav-footer">
+            <button class="nav-item logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1>Calendar</h1>
+            <p>Manage your schedule and important events</p>
+        </div>
+
+        <div class="calendar-page-grid">
+            <div class="calendar-main">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 id="calendarMonthYear"></h3>
+                        <div class="calendar-nav">
+                            <button id="calPrevMonth"><i class="fas fa-chevron-left"></i></button>
+                            <button id="calNextMonth"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="calendar-container">
+                        <div class="calendar-weekdays">
+                            <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                        </div>
+                        <div class="calendar-days full-calendar" id="fullCalendarDays"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="calendar-sidebar">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-star"></i> Important Events</h3>
+                        <button class="btn btn-primary btn-sm" id="addEventBtn">
+                            <i class="fas fa-plus"></i> Add Event
+                        </button>
+                    </div>
+                    <div class="events-container" id="importantEvents">
+                        <div class="no-events">
+                            <i class="fas fa-calendar-plus"></i>
+                            <p>No important events yet</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-clock"></i> Important Deadlines</h3>
+                    <div class="countdown-container" id="calendarCountdown"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>All Tasks</h3>
+                        <button class="btn btn-primary btn-sm" id="addCalendarTaskBtn">
+                            <i class="fas fa-plus"></i> Add Task
+                        </button>
+                    </div>
+                    <div class="tasks-container" id="allTasks"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Event Modal -->
+    <div class="modal" id="eventModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="eventModalTitle">Add Important Event</h3>
+                <button class="close-btn" id="closeEventModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="eventTitle" placeholder="Event title" required>
+                <textarea id="eventDescription" placeholder="Event description (optional)" rows="3"></textarea>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Date</label>
+                        <input type="date" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time</label>
+                        <input type="time" id="eventTime">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Event Type</label>
+                        <select id="eventType">
+                            <option value="meeting">Meeting</option>
+                            <option value="deadline">Deadline</option>
+                            <option value="exam">Exam</option>
+                            <option value="presentation">Presentation</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Recurrence</label>
+                        <select id="eventRecurrence">
+                            <option value="none">None (One-time)</option>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="biweekly">Bi-weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Color</label>
+                    <div class="color-picker">
+                        <input type="color" id="eventColor" value="#3b82f6">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveEventBtn">Add Event</button>
+                <button class="btn btn-secondary" id="cancelEventBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="taskModalTitle">Add Task</h3>
+                <button class="close-btn" id="closeTaskModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="taskTitle" placeholder="Task title" required>
+                <textarea id="taskDescription" placeholder="Description (optional)" rows="3"></textarea>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Due Date</label>
+                        <input type="date" id="taskDate">
+                    </div>
+                    <div class="form-group">
+                        <label>Due Time</label>
+                        <input type="time" id="taskTime">
+                    </div>
+                </div>
+                <select id="taskPriority">
+                    <option value="low">Low Priority</option>
+                    <option value="medium" selected>Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="taskImportant">
+                    <span>Important (show countdown)</span>
+                </label>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveTaskBtn">Add Task</button>
+                <button class="btn btn-secondary" id="cancelTaskBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/script.js"></script>
+    <script src="assets/calendar.js"></script>
+</body>
+</html>

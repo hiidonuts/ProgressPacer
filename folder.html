@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProgressPacer - My Folder</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="icon" type="image/x-icon" href="img/icons/favicon.svg">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Add immediate login check -->
+    <script>
+        // Check login status immediately before page loads
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <button class="nav-toggle" id="navToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-logo">
+            <h1>ProgressPacer</h1>
+        </div>
+        <div class="nav-actions">
+            <div class="notification-container">
+                <button class="notification-btn" id="notificationBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge hidden" id="notificationBadge">0</span>
+                </button>
+                <div class="notification-dropdown" id="notificationDropdown">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button class="btn-link" id="markAllRead">Mark all as read</button>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <div class="no-notifications">
+                            <i class="fas fa-bell-slash"></i>
+                            <p>No notifications yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Side Navigation -->
+    <div class="sidenav" id="sideNav">
+        <div class="sidenav-header">
+            <h2>Navigation</h2>
+            <button class="close-btn" id="closeSideNav">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidenav-content">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="calendar.html" class="nav-item">
+                <i class="fas fa-calendar"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="gpa.html" class="nav-item">
+                <i class="fas fa-graduation-cap"></i>
+                <span>My GPAs</span>
+            </a>
+            <a href="folder.html" class="nav-item active">
+                <i class="fas fa-folder"></i>
+                <span>My Folder</span>
+            </a>
+            <a href="profile.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+        <div class="sidenav-footer">
+            <button class="nav-item logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header">
+            <h1>My Files</h1>
+            <p>Manage your documents and folders</p>
+        </div>
+
+        <div class="folder-grid">
+            <!-- Left Column -->
+            <div class="folder-main">
+                <!-- Folder Container -->
+                <div class="folder-container">
+                    <!-- Breadcrumbs -->
+                    <div class="breadcrumbs" id="breadcrumbs">
+                        <span class="breadcrumb-item">Root</span>
+                    </div>
+
+                    <!-- Folder Toolbar -->
+                    <div class="folder-toolbar" id="folderToolbar">
+                        <div class="toolbar-left">
+                            <button id="backBtn" class="btn-icon" title="Go back">
+                                <i class="fas fa-arrow-left"></i>
+                            </button>
+                            <button id="newFolderBtn" class="btn btn-primary btn-sm">
+                                <i class="fas fa-folder-plus"></i> New Folder
+                            </button>
+                            <label for="fileInput" class="btn btn-primary btn-sm">
+                                <i class="fas fa-file-upload"></i> Upload Files
+                            </label>
+                            <input type="file" id="fileInput" multiple style="display: none;">
+                        </div>
+                    </div>
+
+                    <!-- File List -->
+                    <div class="file-list" id="fileList">
+                        <!-- Content will be dynamically generated -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="folder-sidebar">
+                <!-- File Editor -->
+                <div class="file-editor-container">
+                    <div class="editor-header">
+                        <div class="editor-title" id="fileEditorTitle">
+                            <i class="fas fa-file"></i> Select a file
+                        </div>
+                    </div>
+                    <div class="editor-content" id="fileEditor">
+                        <div class="no-file-selected">
+                            <i class="fas fa-file-alt"></i>
+                            <p>Select a file to view and edit its contents</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Storage Info -->
+                <div class="storage-info">
+                    <div class="storage-header">
+                        <div class="storage-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="storage-title">Storage Overview</div>
+                    </div>
+                    <div class="storage-stats">
+                        <div class="storage-stat">
+                            <div class="stat-value" id="totalFiles">0</div>
+                            <div class="stat-label">Files</div>
+                        </div>
+                        <div class="storage-stat">
+                            <div class="stat-value" id="totalFolders">0</div>
+                            <div class="stat-label">Folders</div>
+                        </div>
+                        <div class="storage-stat">
+                            <div class="stat-value" id="storageUsed">0 KB</div>
+                            <div class="stat-label">Used</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Folder Name Modal -->
+    <div class="modal blur-modal" id="folderModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Create New Folder</h3>
+                <button class="close-btn" id="closeFolderModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="folderName">Folder Name</label>
+                    <input type="text" id="folderName" placeholder="Enter folder name" autofocus>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="createFolderBtn">Create Folder</button>
+                <button class="btn btn-secondary" id="cancelFolderBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal blur-modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirm Action</h3>
+                <button class="close-btn" id="closeConfirmModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmYesBtn">Yes</button>
+                <button class="btn btn-secondary" id="confirmNoBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/script.js"></script>
+    <script src="assets/folder.js"></script>
+    <script>
+        // Ensure all event listeners are properly attached
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded");
+            
+            // Initialize folder page
+            if (typeof initializeFolderPage === 'function') {
+                initializeFolderPage();
+            } else {
+                console.error("initializeFolderPage function not found");
+            }
+            
+            // Manually attach event listeners to critical elements
+            const newFolderBtn = document.getElementById('newFolderBtn');
+            if (newFolderBtn) {
+                console.log("Attaching click event to newFolderBtn");
+                newFolderBtn.addEventListener('click', function() {
+                    console.log("New folder button clicked");
+                    if (typeof openFolderModal === 'function') {
+                        openFolderModal();
+                    } else {
+                        console.error("openFolderModal function not found");
+                        
+                        // Fallback implementation
+                        const modal = document.getElementById('folderModal');
+                        const overlay = document.getElementById('overlay');
+                        if (modal && overlay) {
+                            modal.classList.add('active');
+                            overlay.classList.add('active');
+                        }
+                    }
+                });
+            }
+            
+            const fileInput = document.getElementById('fileInput');
+            if (fileInput) {
+                console.log("Attaching change event to fileInput");
+                fileInput.addEventListener('change', function(event) {
+                    console.log("File input changed");
+                    if (typeof handleFileUpload === 'function') {
+                        handleFileUpload(event);
+                    } else {
+                        console.error("handleFileUpload function not found");
+                    }
+                });
+            }
+            
+            const createFolderBtn = document.getElementById('createFolderBtn');
+            if (createFolderBtn) {
+                console.log("Attaching click event to createFolderBtn");
+                createFolderBtn.addEventListener('click', function() {
+                    console.log("Create folder button clicked");
+                    if (typeof createFolder === 'function') {
+                        createFolder();
+                    } else {
+                        console.error("createFolder function not found");
+                    }
+                });
+            }
+            
+            const closeFolderModal = document.getElementById('closeFolderModal');
+            if (closeFolderModal) {
+                console.log("Attaching click event to closeFolderModal");
+                closeFolderModal.addEventListener('click', function() {
+                    console.log("Close folder modal button clicked");
+                    const modal = document.getElementById('folderModal');
+                    const overlay = document.getElementById('overlay');
+                    if (modal && overlay) {
+                        modal.classList.remove('active');
+                        overlay.classList.remove('active');
+                    }
+                });
+            }
+            
+            const cancelFolderBtn = document.getElementById('cancelFolderBtn');
+            if (cancelFolderBtn) {
+                console.log("Attaching click event to cancelFolderBtn");
+                cancelFolderBtn.addEventListener('click', function() {
+                    console.log("Cancel folder button clicked");
+                    const modal = document.getElementById('folderModal');
+                    const overlay = document.getElementById('overlay');
+                    if (modal && overlay) {
+                        modal.classList.remove('active');
+                        overlay.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

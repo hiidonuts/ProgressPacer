@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProgressPacer - Dashboard</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="icon" type="image/x-icon" href="img/icons/favicon.svg">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+    <!-- Add immediate login check -->
+    <script>
+        // Check login status immediately before page loads
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <button class="nav-toggle" id="navToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-logo">
+            <h1>ProgressPacer</h1>
+        </div>
+        <div class="nav-actions">
+            <div class="notification-container">
+                <button class="notification-btn" id="notificationBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge hidden" id="notificationBadge">0</span>
+                </button>
+                <div class="notification-dropdown" id="notificationDropdown">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button class="btn-link" id="markAllRead">Mark all as read</button>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <div class="no-notifications">
+                            <i class="fas fa-bell-slash"></i>
+                            <p>No notifications yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Side Navigation -->
+    <div class="sidenav" id="sideNav">
+        <div class="sidenav-header">
+            <h2>Navigation</h2>
+            <button class="close-btn" id="closeSideNav">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidenav-content">
+            <a href="index.html" class="nav-item active" data-page="home">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+           
+            <a href="calendar.html" class="nav-item" data-page="calendar">
+                <i class="fas fa-calendar"></i>
+                <span>Calendar</span>
+            </a>
+
+            <a href="gpa.html" class="nav-item" data-page="gpa">
+                <i class="fas fa-graduation-cap"></i>
+                <span>My GPAs</span>
+            </a>
+            
+            <a href="folder.html" class="nav-item" data-page="folder">
+                <i class="fas fa-folder"></i>
+                <span>My Folder</span>
+            </a>
+
+            <a href="profile.html" class="nav-item" data-page="profile">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+        
+        <div class="sidenav-footer">
+            <button class="nav-item logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Welcome Header -->
+        <div class="welcome-header">
+            <div class="welcome-content">
+                <h1 class="welcome-title">Welcome back, <span id="welcomeName">Student</span>! 👋</h1>
+                <p class="welcome-subtitle">Ready to make today productive?</p>
+            </div>
+            <div class="motivational-quote">
+                <div class="quote-content">
+                    <i class="fas fa-quote-left quote-icon"></i>
+                    <p class="quote-text" id="dailyQuote">Loading inspirational quote...</p>
+                    <span class="quote-author" id="quoteAuthor">- Author</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-grid">
+            <!-- Left Column -->
+            <div class="column" id="leftColumn">
+                <div class="card" id="calendarCard">
+                    <div class="card-header">
+                        <h3><i class="fas fa-calendar-alt"></i> Calendar</h3>
+                        <div class="calendar-nav">
+                            <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                            <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                        </div>
+                    </div>
+                    <div class="calendar-container">
+                        <div class="calendar-weekdays">
+                            <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                        </div>
+                        <div class="calendar-days" id="calendarDays"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Column -->
+            <div class="column" id="middleColumn">
+                <!-- Current Time -->
+                <div class="card time-card" id="timeCard">
+                    <div class="current-date" id="currentDate"></div>
+                    <div class="current-time" id="currentTime"></div>
+                </div>
+
+                <!-- This Week
+                <div class="card" id="weekCard">
+                    <div class="card-header">
+                        <h3><i class="fas fa-calendar-week"></i> This Week</h3>
+                    </div>
+                    <div class="week-calendar" id="weekCalendar"></div>
+                </div> -->
+
+                <!-- Goals -->
+                <div class="card" id="goalsCard">
+                    <div class="card-header">
+                        <h3><i class="fas fa-target"></i> Goals Progress</h3>
+                        <button class="btn btn-primary btn-sm" id="addGoalBtn">
+                            <i class="fas fa-plus"></i> Add Goal
+                        </button>
+                    </div>
+                    <div class="goals-container" id="goalsContainer"></div>
+                </div>
+
+                <!-- Today's Tasks -->
+                <div class="card" id="taskCard">
+                    <div class="card-header">
+                        <h3><i class="fas fa-tasks"></i> Today's Tasks</h3>
+                        <button class="btn btn-primary btn-sm" id="addTaskBtn">
+                            <i class="fas fa-plus"></i> Add Task
+                        </button>
+                    </div>
+                    <div class="tasks-container" id="todayTasks"></div>
+                </div>
+
+                <!-- Countdown Timer -->
+                <div class="card" id="timerCard">
+                    <div class="card-header">
+                        <h3><i class="fas fa-clock"></i> Important Deadlines</h3>
+                    </div>
+                    <div class="countdown-container" id="countdownContainer"></div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="column" id="rightColumn">
+                <!-- Timer -->
+                <div class="card timer-card" id="studyTimerCard">
+                    <div class="card-header">
+                        <h3><i class="fas fa-stopwatch"></i> Study Timer</h3>
+                    </div>
+                    <div class="timer-display">
+                        <div class="timer-circle">
+                            <svg class="timer-svg">
+                                <circle class="timer-bg" cx="80" cy="80" r="70"></circle>
+                                <circle class="timer-progress" cx="80" cy="80" r="70" id="timerProgress"></circle>
+                            </svg>
+                            <div class="timer-time" id="timerTime">25:00</div>
+                        </div>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="btn btn-success" id="startPauseBtn">
+                            <i class="fas fa-play"></i> Start
+                        </button>
+                        <button class="btn btn-secondary" id="resetBtn">
+                            <i class="fas fa-redo"></i> Reset
+                        </button>
+                    </div>
+                    <div class="timer-presets">
+                        <button class="preset-btn active" data-time="1500">25m</button>
+                        <button class="preset-btn" data-time="900">15m</button>
+                        <button class="preset-btn" data-time="3000">50m</button>
+                    </div>
+                    <div class="timer-custom">
+                        <input type="number" id="customTimeInput" placeholder="Enter minutes" min="1" class="form-control">
+                        <button class="btn btn-primary btn-sm" onclick="setCustomTime()">
+                            <i class="fas fa-check"></i> Set
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Spotify -->
+                <div class="card" id="spotifyCard">
+                    <div class="card-header">
+                        <h3><i class="fab fa-spotify"></i> Focus Music</h3>
+                    </div>
+                    <div class="spotify-input-group">
+                        <input type="text" id="spotifyUrlInput" placeholder="Paste Spotify playlist link">
+                        <button class="btn btn-primary btn-sm" onclick="updateSpotifyEmbed()">
+                            <i class="fas fa-check"></i> Set
+                        </button>
+                    </div>
+                    <div class="spotify-container">
+                        <iframe id="spotifyFrame"
+                            src="https://open.spotify.com/embed/playlist/37i9dQZF1DX0XUsuxWHRQd?utm_source=generator&theme=0"
+                            width="100%" height="352" frameborder="0" allowtransparency="true"
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                            loading="lazy">
+                        </iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Task Modal -->
+    <div class="modal blur-modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="taskModalTitle">Add Task</h3>
+                <button class="close-btn" id="closeTaskModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="taskTitle">Task Title</label>
+                    <input type="text" id="taskTitle" placeholder="Enter task title" required>
+                </div>
+                <div class="form-group">
+                    <label for="taskDescription">Description (Optional)</label>
+                    <textarea id="taskDescription" placeholder="Enter task description" rows="3"></textarea>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="taskDate">Due Date</label>
+                        <input type="date" id="taskDate">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskTime">Due Time</label>
+                        <input type="time" id="taskTime">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="taskPriority">Priority</label>
+                    <select id="taskPriority">
+                        <option value="low">Low Priority</option>
+                        <option value="medium" selected>Medium Priority</option>
+                        <option value="high">High Priority</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="taskImportant">
+                        <span>Important (show countdown)</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveTaskBtn">Add Task</button>
+                <button class="btn btn-secondary" id="cancelTaskBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Goal Modal -->
+    <div class="modal blur-modal" id="goalModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="goalModalTitle">Add Goal</h3>
+                <button class="close-btn" id="closeGoalModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="goalTitle">Goal Title</label>
+                    <input type="text" id="goalTitle" placeholder="Enter goal title" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="goalProgress">Current Progress</label>
+                        <input type="number" id="goalProgress" placeholder="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="goalTarget">Target</label>
+                        <input type="number" id="goalTarget" placeholder="100" min="1" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="goalColor">Color</label>
+                    <div class="color-picker">
+                        <input type="color" id="goalColor" value="#3b82f6">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="goalType">Goal Type</label>
+                    <select id="goalType">
+                        <option value="general">General Goal</option>
+                        <option value="study">Study Hours (Links to Timer)</option>
+                        <option value="tasks">Task Completion</option>
+                        <option value="assignments">Assignments</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveGoalBtn">Add Goal</button>
+                <button class="btn btn-secondary" id="cancelGoalBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal blur-modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirm Action</h3>
+                <button class="close-btn" id="closeConfirmModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmYesBtn">Yes</button>
+                <button class="btn btn-secondary" id="confirmNoBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/script.js"></script>
+</body>
+</html>

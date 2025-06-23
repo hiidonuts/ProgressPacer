@@ -1,0 +1,27 @@
+
+2025-06-23 06:00:30 - Registration attempt: Username: eyesore, Email: vendingidiots@gmail.com
+Exception: Access denied for user 'root'@'localhost' (using password: YES)
+2025-06-23 06:03:32 - Registration attempt: Username: eyesore, Email: vendingidiots@gmail.com
+Exception: Access denied for user 'root'@'localhost' (using password: YES)
+2025-06-23 06:06:54 - Registration attempt: Username: eyesore, Email: vendingidiots@gmail.com
+Exception: Access denied for user 'root'@'localhost' (using password: YES)
+2025-06-23 06:08:17 - Registration attempt: Username: eyesore, Email: vendingidiots@gmail.com
+Exception: Access denied for user 'root'@'localhost' (using password: YES)
+2025-06-23 06:10:23 - Registration attempt: Username: eyesore, Email: vendingidiots@gmail.com
+Exception: Access denied for user 'root'@'localhost' (using password: YES)
+2025-06-23 06:12:26 - Registration attempt: Username: eyesore, Email: vendingidiots@gmail.com
+Table structure confirmed:
+  - user_id (varchar(100))
+  - email (varchar(100))
+  - pass (varchar(50))
+  - reg_date (timestamp)
+Attempting to execute query...
+Exception: Data too long for column 'pass' at row 1
+2025-06-23 06:15:11 - Registration attempt: Username: eyesore, Email: vendingidiots@gmail.com
+Table structure confirmed:
+  - user_id (varchar(100))
+  - email (varchar(100))
+  - pass (varchar(255))
+  - reg_date (timestamp)
+Attempting to execute query...
+Registration successful

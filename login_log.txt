@@ -1,0 +1,8 @@
+2025-06-23 06:15:44 - Login attempt: Username: eyesore
+Exception: Access denied for user 'root'@'localhost' (using password: YES)
+2025-06-23 16:33:17 - Login attempt: Username: venicevkx@gmail.com
+Database connection successful
+Exception: Unknown column 'id' in 'field list'
+2025-06-23 16:33:19 - Login attempt: Username: venicevkx@gmail.com
+Database connection successful
+Exception: Unknown column 'id' in 'field list'

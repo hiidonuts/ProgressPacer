@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProgressPacer - Profile</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <link rel="stylesheet" href="assets/profile.css">
+    <link rel="icon" type="image/x-icon" href="img/icons/favicon.svg">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Add immediate login check -->
+    <script>
+        // Check login status immediately before page loads
+        if (localStorage.getItem('isLoggedIn') !== 'true') {
+            window.location.href = 'login.html';
+        }
+    </script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <button class="nav-toggle" id="navToggle">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-logo">
+            <h1>ProgressPacer</h1>
+        </div>
+        <div class="nav-actions">
+            <div class="notification-container">
+                <button class="notification-btn" id="notificationBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge hidden" id="notificationBadge">0</span>
+                </button>
+                <div class="notification-dropdown" id="notificationDropdown">
+                    <div class="notification-header">
+                        <h3>Notifications</h3>
+                        <button class="btn-link" id="markAllRead">Mark all as read</button>
+                    </div>
+                    <div class="notification-list" id="notificationList">
+                        <div class="no-notifications">
+                            <i class="fas fa-bell-slash"></i>
+                            <p>No notifications yet</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Side Navigation -->
+    <div class="sidenav" id="sideNav">
+        <div class="sidenav-header">
+            <h2>Navigation</h2>
+            <button class="close-btn" id="closeSideNav">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="sidenav-content">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="calendar.html" class="nav-item">
+                <i class="fas fa-calendar"></i>
+                <span>Calendar</span>
+            </a>
+            <a href="gpa.html" class="nav-item">
+                <i class="fas fa-graduation-cap"></i>
+                <span>My GPAs</span>
+            </a>
+            <a href="folder.html" class="nav-item">
+                <i class="fas fa-folder"></i>
+                <span>My Folder</span>
+            </a>
+            <a href="profile.html" class="nav-item active">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </a>
+        </div>
+        <div class="sidenav-footer">
+            <button class="nav-item logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="profile-container">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="profile-background"></div>
+                <div class="profile-info">
+                    <div class="avatar-section">
+                        <div class="avatar-container">
+                            <div class="avatar-circle" id="avatarCircle">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <button class="change-avatar-btn" id="changeAvatarBtn">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                            <input type="file" id="avatarInput" accept="image/*" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="profile-details">
+                        <h1 class="profile-name" id="displayName">John Doe</h1>
+                        <p class="profile-email" id="displayEmail">john.doe@example.com</p>
+                        <div class="profile-meta">
+                            <div class="profile-meta-item">
+                                <i class="fas fa-id-card"></i>
+                                <span id="displayStudentId">STU-2024-001</span>
+                            </div>
+                            <div class="profile-meta-item">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span id="displayMajor">Computer Science</span>
+                            </div>
+                            <div class="profile-meta-item">
+                                <i class="fas fa-user-graduate"></i>
+                                <span id="displayYear">Junior</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="edit-profile-btn" id="editProfileBtn">
+                            <i class="fas fa-edit"></i>
+                            <span>Edit Profile</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Stats Grid -->
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon study-hours">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="totalStudyHours">124</div>
+                            <div class="stat-label">Study Hours</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon tasks">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="completedTasks">87</div>
+                            <div class="stat-label">Tasks Completed</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon gpa">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="currentGPA">3.85</div>
+                            <div class="stat-label">Current GPA</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon goals">
+                            <i class="fas fa-trophy"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-value" id="goalsAchieved">12</div>
+                            <div class="stat-label">Goals Achieved</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Content Grid -->
+            <div class="profile-content-grid">
+                <!-- Activity Section -->
+                <div class="profile-column">
+                    <div class="activity-section card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-history"></i> Recent Activity</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-list" id="activityList">
+                                <div class="activity-item">
+                                    <div class="activity-icon completed">
+                                        <i class="fas fa-check"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Completed Math Assignment</div>
+                                        <div class="activity-time">2 hours ago</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon study">
+                                        <i class="fas fa-book"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Studied for 2 hours</div>
+                                        <div class="activity-time">5 hours ago</div>
+                                    </div>
+                                </div>
+                                <div class="activity-item">
+                                    <div class="activity-icon goal">
+                                        <i class="fas fa-bullseye"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <div class="activity-title">Achieved weekly goal</div>
+                                        <div class="activity-time">1 day ago</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settings Section -->
+                <div class="profile-column">
+                    <div class="settings-section card">
+                        <div class="card-header">
+                            <h3><i class="fas fa-cog"></i> Settings</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="settings-tabs">
+                                <button class="settings-tab active" data-tab="notifications">
+                                    <i class="fas fa-bell"></i>
+                                    <span>Notifications</span>
+                                </button>
+                                <button class="settings-tab" data-tab="appearance">
+                                    <i class="fas fa-palette"></i>
+                                    <span>Appearance</span>
+                                </button>
+                                <button class="settings-tab" data-tab="security">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Security</span>
+                                </button>
+                                <button class="settings-tab" data-tab="data">
+                                    <i class="fas fa-database"></i>
+                                    <span>Data</span>
+                                </button>
+                            </div>
+                            
+                            <div class="settings-content active" id="notifications-tab">
+                                <div class="preference-item">
+                                    <div class="preference-info">
+                                        <div class="preference-label">Email Notifications</div>
+                                        <div class="preference-description">Receive email updates about your tasks and goals</div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="emailNotifications" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="preference-item">
+                                    <div class="preference-info">
+                                        <div class="preference-label">Push Notifications</div>
+                                        <div class="preference-description">Receive browser notifications for important updates</div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="pushNotifications" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="preference-item">
+                                    <div class="preference-info">
+                                        <div class="preference-label">Weekly Reports</div>
+                                        <div class="preference-description">Get a weekly summary of your progress</div>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="weeklyReports">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-content" id="appearance-tab">
+                                <h4 class="settings-subtitle">Theme</h4>
+                                <div class="theme-selector">
+                                    <div class="theme-option active" data-theme="light">
+                                        <div class="theme-preview light-theme"></div>
+                                        <span>Light</span>
+                                    </div>
+                                    <div class="theme-option" data-theme="dark">
+                                        <div class="theme-preview dark-theme"></div>
+                                        <span>Dark</span>
+                                    </div>
+                                    <div class="theme-option" data-theme="system">
+                                        <div class="theme-preview system-theme"></div>
+                                        <span>System</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-content" id="security-tab">
+                                <div class="security-option">
+                                    <button class="btn btn-outline" id="changePasswordBtn">
+                                        <i class="fas fa-lock"></i>
+                                        <span>Change Password</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-content" id="data-tab">
+                                <div class="data-actions">
+                                    <div class="data-action-btn" id="exportDataBtn">
+                                        <div class="data-action-icon export">
+                                            <i class="fas fa-download"></i>
+                                        </div>
+                                        <div class="data-action-content">
+                                            <div class="data-action-title">Export Data</div>
+                                            <div class="data-action-description">Download your data as JSON</div>
+                                        </div>
+                                    </div>
+                                    <div class="data-action-btn" id="importDataBtn">
+                                        <div class="data-action-icon import">
+                                            <i class="fas fa-upload"></i>
+                                        </div>
+                                        <div class="data-action-content">
+                                            <div class="data-action-title">Import Data</div>
+                                            <div class="data-action-description">Restore from backup</div>
+                                        </div>
+                                    </div>
+                                    <input type="file" id="importDataInput" accept=".json" style="display: none;">
+                                    <div class="data-action-btn danger-action" id="deleteAccountBtn">
+                                        <div class="data-action-icon delete">
+                                            <i class="fas fa-user-slash"></i>
+                                        </div>
+                                        <div class="data-action-content">
+                                            <div class="data-action-title">Delete Account</div>
+                                            <div class="data-action-description">Permanently delete your account and data</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-edit"></i> Edit Profile</h3>
+                <button class="close-btn" id="closeEditProfileModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="editName">Full Name</label>
+                    <input type="text" id="editName" placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label for="editEmail">Email</label>
+                    <input type="email" id="editEmail" placeholder="Enter your email">
+                </div>
+                <div class="form-group">
+                    <label for="editStudentId">Student ID</label>
+                    <input type="text" id="editStudentId" placeholder="Enter your student ID">
+                </div>
+                <div class="form-group">
+                    <label for="editMajor">Major</label>
+                    <input type="text" id="editMajor" placeholder="Enter your major">
+                </div>
+                <div class="form-group">
+                    <label for="editYear">Academic Year</label>
+                    <select id="editYear">
+                        <option value="Freshman">Freshman</option>
+                        <option value="Sophomore">Sophomore</option>
+                        <option value="Junior">Junior</option>
+                        <option value="Senior">Senior</option>
+                        <option value="Graduate">Graduate</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="saveProfileBtn">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+                <button class="btn btn-secondary" id="cancelEditProfileBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal -->
+    <div class="modal" id="changePasswordModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-lock"></i> Change Password</h3>
+                <button class="close-btn" id="closeChangePasswordModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="currentPassword">Current Password</label>
+                    <input type="password" id="currentPassword" placeholder="Enter current password">
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">New Password</label>
+                    <input type="password" id="newPassword" placeholder="Enter new password">
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm New Password</label>
+                    <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="savePasswordBtn">
+                    <i class="fas fa-key"></i>
+                    Change Password
+                </button>
+                <button class="btn btn-secondary" id="cancelPasswordBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirm Action</h3>
+                <button class="close-btn" id="closeConfirmModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="confirm-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <p id="confirmMessage">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" id="confirmYesBtn">Yes</button>
+                <button class="btn btn-secondary" id="confirmNoBtn">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/profile.js"></script>
+</body>
+</html>
